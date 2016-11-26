@@ -48,3 +48,10 @@ tramp
 yesod-devel/
 .stack-work
 /TAGS
+slidex-*
+slidex.log
+slidex.pdf
+slidex.sync*
+slidex.top
+slidex.tuc
+slidex.tui

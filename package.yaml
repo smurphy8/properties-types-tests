@@ -10,6 +10,10 @@ extra-source-files:
 dependencies:
   - base >=4 && <5
   - lens
+  - lens-regex
+  - regex-base
+  - regex-posix
+  - text
   - lucid  
 library:
   source-dirs: src
@@ -17,7 +21,7 @@ library:
   exposed-modules:
   - Example.Properties
   - Example.Properties.Internal
-
+  - Example.Properties.Types.FixedText
 executables:
   properties-types-tests:
     main: Main.hs

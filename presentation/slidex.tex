@@ -1,0 +1,109 @@
+\usemodule[vim]
+\enablemode[presentation]
+\definevimtyping[Haskell][syntax=haskell,tab=2]                      
+\definevimtyping [RUBY]  [syntax=ruby]
+\setupcolors[state=start]
+\startmode[presentation]
+\setuppapersize[S6][S6] 
+
+\usetypescript[helvetica] [ec]
+\setupbodyfont[helvetica,20pt]
+
+\setuplayout [width=fit,
+              rightmargin=1.5cm,
+              leftmargin=1.5cm,
+              leftmargindistance=0pt,
+              r
+ightmargindistance=0pt,
+              height=fit, 
+              header=0pt, 
+              footer=5pt, 
+              topspace=1.5cm, 
+              backspace=1.5cm,
+              bottomspace=.8cm,
+              bottom=12pt,
+              location=singlesided]
+
+\setupcombinations[distance=0pt]
+
+\setuppagenumber[state=stop]
+
+\setupbackgrounds[page] [background={color,backgraphics,foreground},backgroundcolor=black]
+
+\startcolor[white]
+
+\definestartstop
+   [Slide]
+   [commands={\switchtobodyfont[24pt]},
+    before=\page]
+
+\define[1]\SlideTitle
+  {\midaligned{\tfb #1}
+   \blank[line]}
+
+\stopmode
+
+
+
+
+\starttypescript [mono] [ProjectSourceCode]
+  \definefontsynonym [Mono]     [name:inconsolata]
+  \definefontsynonym [MonoBold] [name:inconsolatabold]
+\stoptypescript
+
+\definetypeface[ProjectFont] [tt] [mono]  [ProjectSourceCode] [default]
+
+\usetypescript[ProjectFont] [ec]
+% \setupbodyfont[ProjectFont]
+
+\definefont[SourceCodeFont][Mono sa 0.45]
+
+\setupvimtyping[
+  style={\switchtobodyfont[ProjectFont,12pt]},
+]
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% START DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\starttext
+
+\startSlide
+\SlideTitle{Correct By Construction!}
+  
+\startHaskell
+
+  -- | Guarantees FixedText will have fixed length
+  --  and valid characters.
+  
+fixedTextFromString :: forall max min regex . 
+  ( KnownNat    max
+  , KnownNat    min
+  , KnownSymbol regex) =>
+    String ->
+    Either FixedTextErrors (FixedText max min regex)
+    
+fixedTextFromString str = final
+  where
+    max'          = fromIntegral $ natVal (Proxy :: Proxy max)
+    min'          = fromIntegral $ natVal (Proxy :: Proxy min)    
+    isTooLittle   = length str < min'
+    regexStr      = symbolVal (Proxy :: Proxy regex)
+    trimmedString = take max' str
+    notRegex      = notValidRegex regexStr trimmedString
+    final
+      | isTooLittle = Left   FixedTextErrorMin
+      | notRegex    = Left $ FixedTextErrorRegex regexStr trimmedString
+      | otherwise   = Right . FixedText .   pack $ trimmedString  
+\stopHaskell  
+\stopSlide
+\stoptext
+
+
+
+   
+
