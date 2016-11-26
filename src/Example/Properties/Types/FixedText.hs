@@ -35,11 +35,14 @@ import Control.Lens
 data FixedTextErrors = FixedTextErrorMin
                      | FixedTextErrorRegex String String
                      | FixedTextErrorMax
+  deriving (Show,Eq,Ord)
 
 
-                     
--- | Text array with max size and min size
-newtype  FixedText (lengthMax::Nat) (lengthMin :: Nat) (regex::Symbol) = FixedText { _unMyText :: Text}
+-- | Text array with max size and min size and character set
+newtype  FixedText (lengthMax :: Nat)
+                   (lengthMin :: Nat)
+                   (regex     :: Symbol) 
+           = FixedText { _unFixedText :: Text}
   deriving (Show,Ord,Eq)
 
 
@@ -66,3 +69,22 @@ notValidRegex regexStr txt =  regexPart /= txt
     regexPart     = txt ^. regex compiledRegex . matchedString
     compiledRegex :: Regex
     compiledRegex = makeRegex regexStr
+
+
+
+
+-- | Just works, example
+exampleFixedText  :: Either FixedTextErrors (FixedText 30 1 "[[:alnum:]]")
+exampleFixedText = fixedTextFromString "exampleText1234" 
+
+-- | Cut off too much input.
+exampleOverFlowProtection :: Either FixedTextErrors (FixedText 10 1 "[[:alnum:]]")
+exampleOverFlowProtection = fixedTextFromString "exampleText1234" 
+
+-- | Reject if below min input
+exampleUnderFlowProtection :: Either FixedTextErrors (FixedText 200 20 "[[:alnum:]]")
+exampleUnderFlowProtection = fixedTextFromString "exampleText1234"
+
+-- | Reject if invalid char
+exampleInvalidChar :: Either FixedTextErrors (FixedText 30 1 "[[:digit:]]")
+exampleInvalidChar = fixedTextFromString "exampleNotAllDigits"
