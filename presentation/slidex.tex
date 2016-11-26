@@ -1,10 +1,44 @@
 \usemodule[vim]
+
+% \enablemode[manuscript]
 \enablemode[presentation]
 \definevimtyping[Haskell][syntax=haskell,tab=2]                      
 \definevimtyping [RUBY]  [syntax=ruby]
 \setupcolors[state=start]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is the markup for the manuscript.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\startmode[manuscript]
+\setvariables[contexts][mono_font_size=7pt]
+\setuppapersize[A4][A4]
+\setupframedtexts[ location=middle,
+                   before  ={\blank[line]},
+                   after   ={\blank[line]} ]
+
+
+
+\let\startSlide\startframedtext
+\let\stopSlide\stopframedtext
+
+\define[1]\SlideTitle{\midaligned{#1}\blank[small]}
+
+\setupbackgrounds[page] [background={backgraphics,foreground}]
+
+\stopmode
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is the markup for the presentation.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \startmode[presentation]
 \setuppapersize[S6][S6] 
+\setvariables[contexts][mono_font_size=8pt]
+
 
 \usetypescript[helvetica] [ec]
 \setupbodyfont[helvetica,20pt]
@@ -59,7 +93,7 @@ ightmargindistance=0pt,
 \definefont[SourceCodeFont][Mono sa 0.45]
 
 \setupvimtyping[
-  style={\switchtobodyfont[ProjectFont,12pt]},
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size}]},
 ]
 
 
@@ -72,7 +106,111 @@ ightmargindistance=0pt,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \starttext
 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title Slide
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \startSlide
+  
+\startmode[manuscript]
+  Properties, types, and tests are words that are
+  are often seen around the FP community.
+\stopmode
+
+\SlideTitle{Properties! \\ And their relation to Types and Tests}
+\stopSlide  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Examples of Property Definitions 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\startSlide  
+\startmode[manuscript]
+  Properties can be defined either as those things which an
+  object has or as those things which an object can do.
+
+
+\stopmode
+\SlideTitle{Two ways of looking at properties}
+\startitemize
+\item The things that define an object.
+\startHaskell
+-- | Product numbers  are: [[:alnum:]]
+-- unicode enc
+-- Max length 140
+-- Min length 1 (can't be empty)
+newtype ProductNumber = ProductNumber { _unProductNumber :: Text}    
+  deriving (Show,Eq,Ord)
+\stopHaskell    
+
+\item The things that define what an object can do.
+\startHaskell
+-- | Product numbers  uniquely determine a particular product
+-- They can be sorted and compared
+newtype ProductNumber = ProductNumber { _unProductNumber :: Text}    
+  deriving (Show,Eq,Ord)
+\stopHaskell    
+\stopitemize
+\stopSlide  
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% What we are trying to do 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\startSlide
+  
+\startmode[manuscript]
+  What we want to do with our types and tests is guarantee
+  that when we say a thing has a property it really has it.
+
+  You can of course do this with careful work in any programming
+  language.  Typed functional programming languages endeavor to make the
+  process quicker than others.  
+\stopmode
+
+\SlideTitle{The Haskell Toolbox \\ The skills to pay the bills.}
+\startitemize
+\item Smart Constructors
+\item Typed Transformation
+\item QuickCheck
+\item LiquidTypes  
+\stopitemize
+
+\stopSlide  
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Correct By Construction Slide
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\startSlide
+  
+\startmode[manuscript]
+FixedText encodes the min max and valid character set.  
+\stopmode
+  
 \SlideTitle{Correct By Construction!}
   
 \startHaskell
@@ -101,6 +239,17 @@ fixedTextFromString str = final
       | otherwise   = Right . FixedText .   pack $ trimmedString  
 \stopHaskell  
 \stopSlide
+
+
+
+
+
+
+
+
+
+
+
 \stoptext
 
 

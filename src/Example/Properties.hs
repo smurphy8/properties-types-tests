@@ -16,45 +16,7 @@ import Text.Regex.Lens
 import Text.Regex.Base
 import Text.Regex.Posix
 import Control.Lens
-
-
-data Errors = FixedTextErrorMin
-            | FixedTextErrorRegex String String
-            | FixedTextErrorMax
-  deriving (Show)
-
--- | Text array with max size and min size
-newtype  FixedText (lengthMax::Nat) (lengthMin :: Nat) (regex::Symbol) = FixedText { _unMyText :: Text}
-  deriving (Show,Ord,Eq)
-
-
-fixedTextFromString :: forall max min regex . ( KnownNat    max
-                                              , KnownNat    min
-                                              , KnownSymbol regex) => String -> Either Errors (FixedText max min regex)
-fixedTextFromString str = final
-  where
-    max'           = fromIntegral $ natVal (Proxy :: Proxy max)
-    min'           = fromIntegral $ natVal (Proxy :: Proxy min)    
-    isTooLittle   = length str < min'
-    regexStr      = symbolVal (Proxy :: Proxy regex)
-    trimmedString = take max' str
-    final
-      | isTooLittle = Left   FixedTextErrorMin
-      | notValidRegex regexStr trimmedString = Left $ FixedTextErrorRegex regexStr trimmedString
-      | otherwise   = Right . FixedText .   pack $ trimmedString  
-
-
-
-notValidRegex :: String -> String -> Bool
-notValidRegex regexStr txt =  regexPart /= txt
-  where
-    regexPart     = txt ^. regex compiledRegex . matchedString
-    compiledRegex :: Regex
-    compiledRegex = makeRegex regexStr
-
-
-instance (KnownNat max, KnownNat min,KnownSymbol regex) => IsString (FixedText max min regex) where
-  fromString = either (error . show) id . fixedTextFromString
+import Example.Properties.Types.FixedText
 
 
 
@@ -63,7 +25,7 @@ instance (KnownNat max, KnownNat min,KnownSymbol regex) => IsString (FixedText m
 -- Max length 140
 -- Min length 1
 newtype ProductNumber = ProductNumber { _unProductNumber :: Text}
-
+  deriving (Show,Eq,Ord)
 -- | Product names are: [[:alnum:]]
 -- unicode enc
 -- Max length 140
