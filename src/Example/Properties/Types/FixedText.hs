@@ -31,8 +31,9 @@ import Text.Regex.Lens
 import Text.Regex.Base
 import Text.Regex.Posix
 import Control.Lens
-import Test.QuickCheck
-
+import Test.QuickCheck (Arbitrary(..),Gen)
+import qualified Test.QuickCheck as QuickCheck
+import qualified Regex.Genex as Genex
 
 
 -- | Set of things that can go wrong with Fixed Text construction
@@ -121,10 +122,34 @@ exampleInvalidChar = fixedTextFromString "exampleNotAllDigits"
 -- | Monoid instance with 0 min
 -- No FixedText besides one that has a minimum size of zero
 -- should be a Monoid.
-instance (KnownNat max, KnownSymbol regex) => 
+instance ( KnownNat max
+         , KnownSymbol regex) => 
  Monoid (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
   mempty  = FixedText ""
   mappend s1@(FixedText str1) (FixedText str2) =
       either (const s1)
              id
              (fixedTextFromText (str1 <> str2))
+
+
+
+
+-- | Arbitrary instance
+-- This arbitrary instance takes advantage of the Monoid defined above
+instance forall max regex . ( KnownNat     max
+                            , KnownSymbol  regex) => 
+  Arbitrary (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
+    arbitrary = let max'            = fromIntegral $ natVal (Proxy :: Proxy max)
+                    regexStr        = symbolVal (Proxy :: Proxy regex)        
+                    generatedString = Genex.genexPure [regexStr]
+
+                 in either (const mempty) id <$>
+                            QuickCheck.elements
+                              (fixedTextFromString <$>
+                                         generatedString)
+
+
+
+
+
+

@@ -13,6 +13,7 @@ dependencies:
   - lens-regex
   - regex-base
   - regex-posix
+  - regex-genex
   - text
   - lucid  
   - QuickCheck

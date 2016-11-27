@@ -28,6 +28,7 @@ library
     , lens-regex
     , regex-base
     , regex-posix
+    , regex-genex
     , text
     , lucid
     , QuickCheck
@@ -51,6 +52,7 @@ executable properties-types-tests
     , lens-regex
     , regex-base
     , regex-posix
+    , regex-genex
     , text
     , lucid
     , QuickCheck
@@ -74,6 +76,7 @@ test-suite spec
     , lens-regex
     , regex-base
     , regex-posix
+    , regex-genex
     , text
     , lucid
     , QuickCheck

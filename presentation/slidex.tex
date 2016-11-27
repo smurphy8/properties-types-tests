@@ -13,7 +13,9 @@
 
 
 \startmode[manuscript]
-\setvariables[contexts][mono_font_size=7pt]
+  \setvariables[contexts][ mono_font_size_small  =7pt
+                         , mono_font_size_mid    =7pt
+                         , mono_font_size_large  =7pt]
 \setuppapersize[A4][A4]
 \setupframedtexts[ location=middle,
                    before  ={\blank[line]},
@@ -37,7 +39,9 @@
 
 \startmode[presentation]
 \setuppapersize[S6][S6] 
-\setvariables[contexts][mono_font_size=9pt]
+\setvariables[contexts][ mono_font_size_small=9pt
+                       , mono_font_size_mid    =9pt
+                       , mono_font_size_large  =12pt]
 
 
 \usetypescript[helvetica] [ec]
@@ -100,7 +104,7 @@
 \definefont[SourceCodeFont][Mono sa 0.45]
 
 \setupvimtyping[
-  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size}]},
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_small}]},
 ]
 
 
@@ -353,7 +357,7 @@ newtype  FixedText (lengthMax :: Nat)    -- Says how big the text can be
 
 
 \setupvimtyping[
-  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size}]},
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_small}]},
 ]
 
 
@@ -505,7 +509,26 @@ instance (KnownNat max, KnownSymbol regex) =>
   test.     
 \stopmode
 \SlideTitle{All Code is Mutable!}
+\startHaskell
+-- | Arbitrary instance
+-- This arbitrary instance takes advantage of the Monoid defined above
+instance forall max regex . ( KnownNat     max
+                            , KnownSymbol  regex) => 
+  Arbitrary (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
+    arbitrary = let max'            = fromIntegral $ natVal (Proxy :: Proxy max)
+                    regexStr        = symbolVal (Proxy :: Proxy regex)        
+                    generatedString = Genex.genexPure [regexStr]
 
+                 in either (const mempty) id <$>
+                            QuickCheck.elements
+                              (fixedTextFromString <$>
+                                         generatedString)
+
+
+
+
+
+\stopHaskell  
 \stopSlide  
 
 
