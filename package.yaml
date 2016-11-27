@@ -15,6 +15,8 @@ dependencies:
   - regex-posix
   - text
   - lucid  
+  - QuickCheck
+
 library:
   source-dirs: src
   ghc-options: -Wall
@@ -42,4 +44,3 @@ tests:
     - tasty-golden
     - tasty-hunit
     - tasty-quickcheck
-    - QuickCheck

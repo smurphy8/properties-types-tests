@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeInType #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -20,14 +22,16 @@ module Example.Properties.Types.FixedText where
 
 
 import Data.Text (pack,Text)
+import qualified Data.Text as Text
 import Data.Proxy (Proxy(..))
 import Data.String (IsString(..))
 import GHC.TypeLits (Nat,natVal,KnownNat,Symbol,KnownSymbol,symbolVal)
+import Data.Monoid
 import Text.Regex.Lens
 import Text.Regex.Base
 import Text.Regex.Posix
 import Control.Lens
-
+import Test.QuickCheck
 
 
 
@@ -46,6 +50,8 @@ newtype  FixedText (lengthMax :: Nat)
   deriving (Show,Ord,Eq)
 
 
+
+-- | String version of the Smart Constructor
 fixedTextFromString :: forall max min regex . 
   ( KnownNat    max
   , KnownNat    min
@@ -63,6 +69,25 @@ fixedTextFromString str = final
       | notRegex    = Left (FixedTextErrorRegex regexStr trimmedString)
       | otherwise   = (Right . FixedText .   pack) trimmedString  
 
+
+-- | Text version of the Smart Constructor
+fixedTextFromText :: forall max min regex . 
+  ( KnownNat    max
+  , KnownNat    min
+  , KnownSymbol regex) => Text -> Either FixedTextErrors (FixedText max min regex)
+fixedTextFromText txt = final
+  where
+    max'          = fromIntegral $ natVal (Proxy :: Proxy max)
+    min'          = fromIntegral $ natVal (Proxy :: Proxy min)    
+    isTooLittle   = Text.length txt < min'
+    regexStr      = symbolVal (Proxy :: Proxy regex)
+    trimmedText   = Text.take max' txt
+    notRegex      = notValidRegex regexStr (Text.unpack trimmedText)
+    final
+      | isTooLittle = Left   FixedTextErrorMin
+      | notRegex    = Left (FixedTextErrorRegex regexStr (Text.unpack trimmedText))
+      | otherwise   = (Right . FixedText  ) trimmedText  
+
 notValidRegex :: String -> String -> Bool
 notValidRegex regexStr txt =  regexPart /= txt
   where
@@ -72,9 +97,9 @@ notValidRegex regexStr txt =  regexPart /= txt
 
 
 
-
--- | Just works, example
-exampleFixedText  :: Either FixedTextErrors (FixedText 30 1 "[[:alnum:]]")
+-- | A few examples to make sure everything works right...
+-- Working input
+exampleFixedText  :: Either FixedTextErrors (FixedText 30 0 "[[:alnum:]]")
 exampleFixedText = fixedTextFromString "exampleText1234" 
 
 -- | Cut off too much input.
@@ -88,3 +113,18 @@ exampleUnderFlowProtection = fixedTextFromString "exampleText1234"
 -- | Reject if invalid char
 exampleInvalidChar :: Either FixedTextErrors (FixedText 30 1 "[[:digit:]]")
 exampleInvalidChar = fixedTextFromString "exampleNotAllDigits"
+
+
+-- | Instances to define
+
+
+-- | Monoid instance with 0 min
+-- No FixedText besides one that has a minimum size of zero
+-- should be a Monoid.
+instance (KnownNat max, KnownSymbol regex) => 
+ Monoid (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
+  mempty  = FixedText ""
+  mappend s1@(FixedText str1) (FixedText str2) =
+      either (const s1)
+             id
+             (fixedTextFromText (str1 <> str2))

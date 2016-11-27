@@ -30,6 +30,7 @@ library
     , regex-posix
     , text
     , lucid
+    , QuickCheck
   exposed-modules:
       Example.Properties
       Example.Properties.Internal
@@ -52,6 +53,7 @@ executable properties-types-tests
     , regex-posix
     , text
     , lucid
+    , QuickCheck
     , optparse-generic
   other-modules:
       Example.Properties
@@ -74,12 +76,12 @@ test-suite spec
     , regex-posix
     , text
     , lucid
+    , QuickCheck
     , regex-genex
     , tasty
     , tasty-golden
     , tasty-hunit
     , tasty-quickcheck
-    , QuickCheck
   other-modules:
       Example.Properties
       Example.Properties.Internal
