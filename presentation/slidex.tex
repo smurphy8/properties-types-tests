@@ -287,18 +287,12 @@ The gist of what is going on...
         types are built correctly.
 
 \item Use Type Encoding, Type Transformation, QuickCheck, and immutability to add or change
-      data  without having to recondtion it.
+      data  without having to recondition it.
 
 \stopitemize
 \stopSlide  
 
 
-
-
-
-\setupvimtyping[
-  style={\switchtobodyfont[ProjectFont,11pt]},
-]
 
 
 
@@ -316,6 +310,14 @@ The gist of what is going on...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Type Level Encoding
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setupvimtyping[
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_mid}]},
+]
+
+
+
+
 \startSlide
 
   \startmode[manuscript]
@@ -330,13 +332,13 @@ The gist of what is going on...
   \stopmode    
   
   \SlideTitle{Type Level Encoding \\ Put it where you can find it... }
-  Create specific types to exactly match
-  some set of properties. e.g. ...
+  Create types to exactly match
+  some set of properties.\\ e.g. ...
   \blank[2*line]
 
   \startHaskell
-newtype  FixedText (lengthMax :: Nat)    -- Says how big the text can be
-                   (lengthMin :: Nat)    -- Says how small it is 
+newtype  FixedText (lengthMax :: Nat)    -- Max text length
+                   (lengthMin :: Nat)    -- Min text length
                    (regex     :: Symbol) -- What characters are allowable
               = FixedText { _unMyText :: Text}
   deriving (Show,Ord,Eq)
@@ -379,7 +381,7 @@ FixedText encodes the min max and valid character set.
 \SlideTitle{Correct By Construction!}  
 \startHaskell
 
-  --  Guarantees FixedText will have fixed length
+  --  Guarantees FixedText will have constrained length
   --  and valid characters.  
 fixedTextFromString :: forall max min regex . 
   ( KnownNat    max
@@ -463,7 +465,7 @@ Left (FixedTextErrorRegex "[[:digit:]]" "exampleNotAllDigits")
 
 
 \setupvimtyping[
-  style={\switchtobodyfont[ProjectFont, 12pt]},
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_large}]},
 ]
 
 
@@ -504,8 +506,13 @@ instance (KnownNat max, KnownSymbol regex) =>
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Check our Constructor With QuickCheck
+% Arbitrary Instance
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setupvimtyping[
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_large}]},
+]
+
 
 \startSlide
 \startmode[manuscript]
@@ -519,15 +526,17 @@ instance (KnownNat max, KnownSymbol regex) =>
   program changes and unexpected behavior.  To this end let's use QuickCheck to build a
   test.     
 \stopmode
-\SlideTitle{All Code is Mutable!}
+\SlideTitle{Arbitrary, but really specific}
 \startHaskell
--- | Arbitrary instance
--- This arbitrary instance takes advantage of the Monoid defined above
-instance forall max regex . ( KnownNat     max
-                            , KnownSymbol  regex) => 
-  Arbitrary (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
-    arbitrary = let max'            = fromIntegral $ natVal (Proxy :: Proxy max)
-                    regexStr        = symbolVal (Proxy :: Proxy regex)        
+
+-- Arbitrary instance
+-- This arbitrary instance takes advantage of
+-- the Monoid defined above
+instance ( KnownNat     max
+         , KnownSymbol  regex) => 
+  Arbitrary (FixedText max 0 regex) where
+
+    arbitrary = let regexStr        = symbolVal (Proxy :: Proxy regex)        
                     generatedString = Genex.genexPure [regexStr]
 
                  in either (const mempty) id <$>
@@ -537,18 +546,154 @@ instance forall max regex . ( KnownNat     max
 
 
 
-
-
 \stopHaskell  
 \stopSlide  
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Check our Constructor With QuickCheck
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setupvimtyping[
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_small}]},
+]
+
+
+\startSlide
+\startmode[manuscript]
+  Because we defined FixedText as a Monoid we want to make sure it obeys the monoid laws.
+  It is a short hand proof to guarantee them but what if something changes later on?
+  That is, if someone changes the constructors.
+
+  We want some way of testing that the proofs are still valid.
+\stopmode
+\SlideTitle{Finally, a Property Test!}
+\startHaskell
+qcProps = testGroup "FixedText properties"
+  [ QC.testProperty "((mempty <> str) == str)"                           leftIdMonoid
+  , QC.testProperty "((str <> mempty) == str)"                           rightIdMonoid
+  , QC.testProperty "(strA <>  strB) <> strC == strA <> (strB  <> strC)" associativityMonoid
+  ]
+
+
+type ExampleFixedText = FixedText 10 0 "[[01233456789]{0,3}"
+leftIdMonoid  :: ExampleFixedText  -> Bool
+leftIdMonoid str = ((mempty <> str) == str) 
+
+rightIdMonoid  :: ExampleFixedText  -> Bool
+rightIdMonoid str = ((str <> mempty) == str)                   
+
+associativityMonoid :: ExampleFixedText  ->
+                       ExampleFixedText  ->
+                       ExampleFixedText  -> Bool
+associativityMonoid strA strB strC = leftAsc == rightAsc
+  where
+    leftAsc  = (strA <>  strB) <> strC
+    rightAsc =  strA <> (strB  <> strC)
+
+\stopHaskell
+
+    
+
+  
+
+\stopSlide
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Display The Results
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setuptyping[typing][bodyfont=12.0pt]
+
+\startSlide
+\SlideTitle{And the Results...}
+
+\starttyping  
+Progress: 1/2Tests
+  Properties
+    FixedText properties
+      ((mempty <> str) == str):                           OK
+        +++ OK, passed 100 tests.
+      ((str <> mempty) == str):                           OK
+        +++ OK, passed 100 tests.
+      (strA <>  strB) <> strC == strA <> (strB  <> strC): OK (0.01s)
+        +++ OK, passed 100 tests.
+\stoptyping
+\blank[line]      
+Victory!
+\stopSlide
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Isomorphism, the best property 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setupvimtyping[
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_small}]},
+]
+
+\startSlide
+\startmode[manuscript]
+We now have a type with nicely defined constraints.
+Lets use it to create a Record for a Product in a database.
+\stopmode    
+\SlideTitle{Our Product Record}
+\definemixedcolumns[sectioncolumns][rulecolor=white,n=2,separator=rule]
+\startsectioncolumns
+\startHaskell
+data Product = Product {
+ _productNumber       :: ProductNumber,
+ _productName         :: ProductName,
+ _version             :: ProductVersion,
+ _productCustomer     :: Customer,
+ _productDescription  :: TText }
+
+data Customer = Customer {
+   _customerName    :: CustomerName,  
+   _customerNumber  :: CustomerNumber,
+   _customerAddress :: CustomerAddress  
+  }
+
+data CustomerAddress = CustomerAddress {
+  _street :: TText,
+  _city   :: TText,
+  _state  :: State
+} deriving (Eq,Ord,Show)
+
+data State = Oklahoma | Texas | Kansas
+  deriving (Eq,Ord,Show)
+\stopHaskell
+\column
+\startHaskell
+  
+-- | Base fields
+newtype ProductNumber  = ProductNumber
+  { _unProductNumber  :: TText}
+  deriving (Eq,Ord,Show)
+
+newtype ProductName    = ProductName
+  { _unProductName    :: TText}
+  deriving (Eq,Ord,Show)
+
+newtype ProductVersion = ProductVersion
+  {_unProductVersion  :: TText}
+  deriving (Eq,Ord,Show)
+newtype CustomerName   = CustomerName
+  { _unCustomerName   :: TText}
+  deriving (Eq,Ord,Show)
+newtype CustomerNumber = CustomerNumber
+  { _unCustomerNumber :: TText}
+  deriving (Eq,Ord,Show)
+
+-- | 140 characters alphanumeric unicode
+type TText = FixedText 140 0 "[[:alnum:]]"
+\stopHaskell
+\stopsectioncolumns
+\stopSlide  
 
 
 \stoptext
-
-
-
-   
-

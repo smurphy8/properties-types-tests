@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeInType #-}
 module Example.PropertiesSpec (tests) where
 
 import Example.Properties
@@ -5,32 +6,35 @@ import Example.Properties
 import Test.Tasty
 import Test.Tasty.QuickCheck as QC
 import Test.Tasty.HUnit
-
+import Example.Properties.Types.FixedText
+import Data.Monoid
 import Data.List
 import Data.Ord
 
 tests :: TestTree
-tests = testGroup "Tests" [properties, unitTests]
+tests = testGroup "Tests" [properties ]
 
 properties :: TestTree
 properties = testGroup "Properties" [qcProps]
 
-qcProps = testGroup "(checked by QuickCheck)"
-  [ QC.testProperty "sort == sort . reverse" (
-      \list -> sort (list :: [Int]) == sort (reverse list))
-  , QC.testProperty "Fermat's little theorem" (
-      \x -> ((x :: Integer)^7 - x) `mod` 7 == 0)
-  -- the following property does not hold
-  , QC.testProperty "Fermat's last theorem" (
-      \x y z n ->
-        (n :: Integer) >= 3 QC.==> x^n + y^n /= (z^n :: Integer))
+qcProps = testGroup "FixedText properties"
+  [ QC.testProperty "((mempty <> str) == str)"                           leftIdMonoid
+  , QC.testProperty "((str <> mempty) == str)"                           rightIdMonoid
+  , QC.testProperty "(strA <>  strB) <> strC == strA <> (strB  <> strC)" associativityMonoid
   ]
 
-unitTests = testGroup "Unit tests"
-  [ testCase "List comparison (different length)" (
-      [1, 2, 3] `compare` [1,2] @?= GT)
 
-  -- the following test does not hold
-  , testCase "List comparison (same length)" (
-      [1, 2, 3] `compare` [1,2,2] @?= LT)
-  ]
+type ExampleFixedText = FixedText 10 0 "[[01233456789]{0,3}"
+leftIdMonoid  :: ExampleFixedText  -> Bool
+leftIdMonoid str = ((mempty <> str) == str) 
+
+rightIdMonoid  :: ExampleFixedText  -> Bool
+rightIdMonoid str = ((str <> mempty) == str)                   
+
+associativityMonoid :: ExampleFixedText  ->
+                       ExampleFixedText  ->
+                       ExampleFixedText  -> Bool
+associativityMonoid strA strB strC = leftAsc == rightAsc
+  where
+    leftAsc  = (strA <>  strB) <> strC
+    rightAsc =  strA <> (strB  <> strC)

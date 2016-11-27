@@ -125,22 +125,22 @@ exampleInvalidChar = fixedTextFromString "exampleNotAllDigits"
 instance ( KnownNat max
          , KnownSymbol regex) => 
  Monoid (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
-  mempty  = FixedText ""
-  mappend s1@(FixedText str1) (FixedText str2) =
-      either (const s1)
-             id
-             (fixedTextFromText (str1 <> str2))
+  mempty                      = FixedText ""
+  mappend s1@(FixedText str1)
+             (FixedText str2) = either (const s1)
+                                        id
+                                        (fixedTextFromText (str1 <> str2))
 
 
 
 
 -- | Arbitrary instance
 -- This arbitrary instance takes advantage of the Monoid defined above
-instance forall max regex . ( KnownNat     max
-                            , KnownSymbol  regex) => 
-  Arbitrary (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
-    arbitrary = let max'            = fromIntegral $ natVal (Proxy :: Proxy max)
-                    regexStr        = symbolVal (Proxy :: Proxy regex)        
+instance ( KnownNat     max
+         , KnownSymbol  regex) => 
+  Arbitrary (FixedText max 0 regex) where
+
+    arbitrary = let regexStr        = symbolVal (Proxy :: Proxy regex)        
                     generatedString = Genex.genexPure [regexStr]
 
                  in either (const mempty) id <$>
