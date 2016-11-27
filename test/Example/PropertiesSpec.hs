@@ -1,15 +1,15 @@
 {-# LANGUAGE TypeInType #-}
 module Example.PropertiesSpec (tests) where
 
-import Example.Properties
+import Example.Properties ()
 
 import Test.Tasty
 import Test.Tasty.QuickCheck as QC
-import Test.Tasty.HUnit
+
 import Example.Properties.Types.FixedText
 import Data.Monoid
-import Data.List
-import Data.Ord
+
+
 
 tests :: TestTree
 tests = testGroup "Tests" [properties ]
@@ -17,6 +17,7 @@ tests = testGroup "Tests" [properties ]
 properties :: TestTree
 properties = testGroup "Properties" [qcProps]
 
+qcProps :: TestTree
 qcProps = testGroup "FixedText properties"
   [ QC.testProperty "((mempty <> str) == str)"                           leftIdMonoid
   , QC.testProperty "((str <> mempty) == str)"                           rightIdMonoid
