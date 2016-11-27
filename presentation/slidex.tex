@@ -654,6 +654,14 @@ Victory!
 \startmode[manuscript]
 We now have a type with nicely defined constraints.
 Lets use it to create a Record for a Product in a database.
+
+One wonderful thing about Functional Programming is the separation between
+larger concepts, effective representations of data and
+operations apon them.
+
+We want to take advantage of this separation by storing our data with one
+representation and then transforming it into a form to make display easy.
+
 \stopmode    
 \SlideTitle{Our Product Record}
 \definemixedcolumns[sectioncolumns][rulecolor=white,n=2,separator=rule]
@@ -707,5 +715,42 @@ type TText = FixedText 140 0 "[[:alnum:]]"
 \stopsectioncolumns
 \stopSlide  
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Arbitrary Instance Generation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setupvimtyping[
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_large}]},
+]
+
+\startSlide
+  \startmode[manuscript]
+    We will use Generic and a library that one of my
+    colleagues wrote.  To generate a bunch of arbitrary instances for us
+    quickly.
+  \stopmode
+  \SlideTitle{Arbitrary Generation}
+  \startHaskell  
+    instance Arbitrary ProductVersion where
+    arbitrary = genericArbitrary
+
+    instance Arbitrary ProductNumber where
+    arbitrary = genericArbitrary
+
+    instance Arbitrary ProductName where
+    arbitrary = genericArbitrary
+
+    instance Arbitrary Product where
+    arbitrary = genericArbitrary
+
+    instance Arbitrary CustomerName where
+    arbitrary = genericArbitrary
+
+    ...
+
+  \stopHaskell  
+\stopSlide  
 
 \stoptext

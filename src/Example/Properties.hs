@@ -20,7 +20,7 @@ module Example.Properties where
 import GHC.Generics
 import Test.QuickCheck.Arbitrary.ADT
 import Example.Properties.Types.FixedText
-
+import Test.QuickCheck
 
 data Product = Product {
  productNumber       :: ProductNumber,
@@ -65,9 +65,7 @@ newtype CustomerNumber = CustomerNumber
   deriving (Eq,Ord,Show,Generic)
 
 -- | 140 characters alphanumeric unicode
-type TText = FixedText 140 0 "[[:alnum:]]"
-
-
+type TText = FixedText 140 0 "[a-z1234567890]"
 data ProductRow = ProductRow
   { rowProductNumber  :: ProductNumber,
     rowName           :: ProductName,
@@ -83,6 +81,9 @@ data ProductRow = ProductRow
 data ProductDocument = ProductDocument !Product !Customer !CustomerAddress
  deriving(Eq,Ord,Show,Generic)
 
+
+
+
 toProductRow  :: Product -> ProductRow
 toProductRow Product {..} = ProductRow productNumber productName    version productDescription
                                        customerName  customerNumber street  city                state
@@ -97,4 +98,37 @@ fromProductRow (ProductRow {..}) = Product rowProductNumber rowName rowVersion c
   where
     customer        = Customer        rowCustomerName   rowCustomerNumber customerAddress
     customerAddress = CustomerAddress rowCustomerStreet rowCustomerCity   rowCustomerState
+
+
     
+-- | Arbitrary instances for the above types (separated for readability)
+
+instance Arbitrary ProductVersion where
+  arbitrary = genericArbitrary
+
+instance Arbitrary ProductNumber where
+  arbitrary = genericArbitrary
+
+instance Arbitrary ProductName where
+  arbitrary = genericArbitrary
+
+instance Arbitrary Product where
+  arbitrary = genericArbitrary
+
+
+
+instance Arbitrary CustomerName where
+  arbitrary = genericArbitrary
+
+instance Arbitrary CustomerNumber where
+  arbitrary = genericArbitrary
+
+instance Arbitrary State where
+  arbitrary = genericArbitrary
+
+instance Arbitrary CustomerAddress where
+  arbitrary = genericArbitrary
+
+instance Arbitrary Customer where
+  arbitrary = genericArbitrary
+
