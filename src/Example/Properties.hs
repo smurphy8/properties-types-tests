@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -20,22 +21,22 @@ import Example.Properties.Types.FixedText
 
 
 data Product = Product {
- _productNumber       :: ProductNumber,
- _productName         :: ProductName,
- _version             :: ProductVersion ,
- _productCustomer     :: Customer,
- _productDescription  :: TText }
+ productNumber       :: ProductNumber,
+ productName         :: ProductName,
+ version             :: ProductVersion ,
+ productCustomer     :: Customer,
+ productDescription  :: TText }
 
 data Customer = Customer {
-   _customerName    :: CustomerName    ,  
-   _customerNumber  :: CustomerNumber  ,
-   _customerAddress :: CustomerAddress  
+   customerName    :: CustomerName    ,  
+   customerNumber  :: CustomerNumber  ,
+   customerAddress :: CustomerAddress  
   }
 
 data CustomerAddress = CustomerAddress {
-  _street :: TText,
-  _city   :: TText,
-  _state  :: State
+  street :: TText,
+  city   :: TText,
+  state  :: State
 } deriving (Eq,Ord,Show)
 
 data State = Oklahoma | Texas | Kansas
@@ -43,22 +44,54 @@ data State = Oklahoma | Texas | Kansas
 
 -- | Base fields
 newtype ProductNumber  = ProductNumber
-  { _unProductNumber  :: TText}
+  { unProductNumber  :: TText}
   deriving (Eq,Ord,Show)
 
 newtype ProductName    = ProductName
-  { _unProductName    :: TText}
+  { unProductName    :: TText}
   deriving (Eq,Ord,Show)
 
 newtype ProductVersion = ProductVersion
-  {_unProductVersion  :: TText}
+  {unProductVersion  :: TText}
   deriving (Eq,Ord,Show)
 newtype CustomerName   = CustomerName
-  { _unCustomerName   :: TText}
+  { unCustomerName   :: TText}
   deriving (Eq,Ord,Show)
 newtype CustomerNumber = CustomerNumber
-  { _unCustomerNumber :: TText}
+  { unCustomerNumber :: TText}
   deriving (Eq,Ord,Show)
 
 -- | 140 characters alphanumeric unicode
 type TText = FixedText 140 0 "[[:alnum:]]"
+
+
+data ProductRow = ProductRow
+  { rowProductNumber  :: ProductNumber,
+    rowName           :: ProductName,
+    rowVersion        :: ProductVersion,
+    rowDescription    :: TText,
+    rowCustomerName   :: CustomerName,
+    rowCustomerNumber :: CustomerNumber,    
+    rowCustomerStreet :: TText,
+    rowCustomerCity   :: TText,
+    rowCustomerState  :: State}
+
+
+data ProductDocument = ProductDocument !Product !Customer !CustomerAddress
+
+
+toProductRow  :: Product -> ProductRow
+toProductRow Product {..} = ProductRow productNumber productName    productVersion productDescription
+                                          customerName  customerNumber customerStreet customerCity customerState
+  where
+    Customer {..}        = productCustomer
+    CustomerAddress {..} = customerAddress
+
+
+
+fromProductRow :: ProductRow -> Product
+fromProductRow (ProductRow {..}) = Product rowProductNumber rowName rowVersion customer rowDescription 
+  where
+    customer        = Customer        rowCustomerName   rowCustomerNumber customerAddress
+    customerAddress = CustomerAddress rowCustomerStreet rowCustomerCity   rowCustomerState
+    
