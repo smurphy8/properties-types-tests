@@ -82,7 +82,7 @@ data ProductDocument = ProductDocument !Product !Customer !CustomerAddress
 
 toProductRow  :: Product -> ProductRow
 toProductRow Product {..} = ProductRow productNumber productName    productVersion productDescription
-                                          customerName  customerNumber customerStreet customerCity customerState
+                                       customerName  customerNumber customerStreet customerCity customerState
   where
     Customer {..}        = productCustomer
     CustomerAddress {..} = customerAddress
