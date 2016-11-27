@@ -9,14 +9,14 @@
 module Example.Properties where
 
 
-import Data.Text (pack,Text)
-import Data.Proxy (Proxy(..))
-import Data.String (IsString(..))
-import GHC.TypeLits (Nat,natVal,KnownNat,Symbol,KnownSymbol,symbolVal)
-import Text.Regex.Lens
-import Text.Regex.Base
-import Text.Regex.Posix
-import Control.Lens
+
+
+
+
+
+
+
+
 import Example.Properties.Types.FixedText
 
 
@@ -81,8 +81,8 @@ data ProductDocument = ProductDocument !Product !Customer !CustomerAddress
 
 
 toProductRow  :: Product -> ProductRow
-toProductRow Product {..} = ProductRow productNumber productName    productVersion productDescription
-                                       customerName  customerNumber customerStreet customerCity customerState
+toProductRow Product {..} = ProductRow productNumber productName    version productDescription
+                                       customerName  customerNumber street  city                state
   where
     Customer {..}        = productCustomer
     CustomerAddress {..} = customerAddress

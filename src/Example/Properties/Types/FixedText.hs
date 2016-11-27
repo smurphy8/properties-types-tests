@@ -24,14 +24,14 @@ module Example.Properties.Types.FixedText where
 import Data.Text (pack,Text)
 import qualified Data.Text as Text
 import Data.Proxy (Proxy(..))
-import Data.String (IsString(..))
+
 import GHC.TypeLits (Nat,natVal,KnownNat,Symbol,KnownSymbol,symbolVal)
 import Data.Monoid
 import Text.Regex.Lens
 import Text.Regex.Base
 import Text.Regex.Posix
 import Control.Lens
-import Test.QuickCheck (Arbitrary(..),Gen)
+import Test.QuickCheck (Arbitrary(..))
 import qualified Test.QuickCheck as QuickCheck
 import qualified Regex.Genex as Genex
 
