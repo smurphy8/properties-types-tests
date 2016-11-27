@@ -13,9 +13,9 @@
 
 
 \startmode[manuscript]
-  \setvariables[contexts][ mono_font_size_small  =7pt
-                         , mono_font_size_mid    =7pt
-                         , mono_font_size_large  =7pt]
+  \setvariables[contexts][ mono_font_size_small=7pt
+                         , mono_font_size_mid=7pt
+                         , mono_font_size_large=7pt]
 \setuppapersize[A4][A4]
 \setupframedtexts[ location=middle,
                    after   ={\blank[line]} ]
@@ -38,9 +38,9 @@
 
 \startmode[presentation]
 \setuppapersize[S6][S6] 
-\setvariables[contexts][ mono_font_size_small=8pt
-                       , mono_font_size_mid    =10pt
-                       , mono_font_size_large  =12pt]
+\setvariables[contexts][ mono_font_size_small=9pt
+                       , mono_font_size_mid=10pt
+                       , mono_font_size_large=12pt]
 
 
 \usetypescript[helvetica] [ec]
@@ -179,6 +179,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Examples of Property Definitions 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setupvimtyping[
+  style={\switchtobodyfont[ProjectFont,\getvariable{contexts}{mono_font_size_mid}]},
+]
+
+
+
 
 \startSlide  
 \startmode[manuscript]
@@ -200,7 +206,7 @@ newtype ProductNumber = ProductNumber { _unProductNumber :: Text}
 
 \item The things that define what an object can do.
 \startHaskell
--- | Product numbers  uniquely determine a particular product
+-- Product numbers  uniquely determine a particular product
 -- They can be sorted and compared
 newtype ProductNumber = ProductNumber { _unProductNumber :: Text}    
   deriving (Show,Eq,Ord)
@@ -373,7 +379,7 @@ FixedText encodes the min max and valid character set.
 \SlideTitle{Correct By Construction!}  
 \startHaskell
 
-  -- | Guarantees FixedText will have fixed length
+  --  Guarantees FixedText will have fixed length
   --  and valid characters.  
 fixedTextFromString :: forall max min regex . 
   ( KnownNat    max
@@ -426,22 +432,28 @@ fixedTextFromString str = final
 \stopmode  
 \SlideTitle{Examples!}  
 \startHaskell
--- | Just works, example
+--  Just works, example
 exampleFixedText  :: Either FixedTextErrors (FixedText 30 1 "[[:alnum:]]")
-exampleFixedText = fixedTextFromString "exampleText1234" 
+exampleFixedText = fixedTextFromString "exampleText1234"
+
 $> exampleFixedText
 Right (FixedText {_unFixedText = "exampleText1234"})
-
--- | Cut off too much input.
+\stopHaskell
+\blank[line]
+\startHaskell
+--  Cut off too much input.
 exampleOverFlowProtection :: Either FixedTextErrors (FixedText 10 1 "[[:alnum:]]")
 exampleOverFlowProtection = fixedTextFromString "exampleText1234" 
+
 $> exampleOverFlowProtection
 Right (FixedText {_unFixedText = "exampleTex"})
-
-
--- | Reject if invalid char
+\stopHaskell
+\blank[line]
+\startHaskell
+--  Reject if invalid char
 exampleInvalidChar :: Either FixedTextErrors (FixedText 30 1 "[[:digit:]]")
 exampleInvalidChar = fixedTextFromString "exampleNotAllDigits"
+
 $> exampleInvalidChar
 Left (FixedTextErrorRegex "[[:digit:]]" "exampleNotAllDigits")
 
@@ -475,9 +487,9 @@ Left (FixedTextErrorRegex "[[:digit:]]" "exampleNotAllDigits")
 
 \blank[2*line]
 \startHaskell
--- | Monoid instance with 0 min
--- No FixedText besides one that has a minimum size of zero
--- should be a Monoid.
+--   Monoid instance with 0 minimum.
+--   No FixedText besides one that has a minimum size of zero
+--   should be a Monoid.
 instance (KnownNat max, KnownSymbol regex) => 
  Monoid (FixedText (max::Nat) (0::Nat) (regex::Symbol)) where
   mempty  = FixedText ""
