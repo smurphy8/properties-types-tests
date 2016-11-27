@@ -570,6 +570,7 @@ instance ( KnownNat     max
 \stopmode
 \SlideTitle{Finally, a Property Test!}
 \startHaskell
+qcProps :: TestTree
 qcProps = testGroup "FixedText properties"
   [ QC.testProperty "((mempty <> str) == str)"                           leftIdMonoid
   , QC.testProperty "((str <> mempty) == str)"                           rightIdMonoid
@@ -659,50 +660,48 @@ Lets use it to create a Record for a Product in a database.
 \startsectioncolumns
 \startHaskell
 data Product = Product {
- _productNumber       :: ProductNumber,
- _productName         :: ProductName,
- _version             :: ProductVersion,
- _productCustomer     :: Customer,
- _productDescription  :: TText }
+ productNumber       :: ProductNumber,
+ productName         :: ProductName,
+ version             :: ProductVersion ,
+ productCustomer     :: Customer,
+ productDescription  :: TText }
+    deriving (Eq,Ord,Show,Generic)
 
 data Customer = Customer {
-   _customerName    :: CustomerName,  
-   _customerNumber  :: CustomerNumber,
-   _customerAddress :: CustomerAddress  
-  }
+   customerName    :: CustomerName    ,  
+   customerNumber  :: CustomerNumber  ,
+   customerAddress :: CustomerAddress }
+    deriving (Eq,Ord,Show,Generic)
 
 data CustomerAddress = CustomerAddress {
-  _street :: TText,
-  _city   :: TText,
-  _state  :: State
-} deriving (Eq,Ord,Show)
+  street :: TText,
+  city   :: TText,
+  state  :: State}
+    deriving (Eq,Ord,Show,Generic)
 
 data State = Oklahoma | Texas | Kansas
-  deriving (Eq,Ord,Show)
-\stopHaskell
-\column
-\startHaskell
-  
+    deriving (Eq,Ord,Show,Generic)
+
 -- | Base fields
 newtype ProductNumber  = ProductNumber
-  { _unProductNumber  :: TText}
-  deriving (Eq,Ord,Show)
+  { unProductNumber  :: TText}
+    deriving (Eq,Ord,Show,Generic)
 
 newtype ProductName    = ProductName
-  { _unProductName    :: TText}
-  deriving (Eq,Ord,Show)
+  { unProductName    :: TText}
+    deriving (Eq,Ord,Show,Generic)
 
 newtype ProductVersion = ProductVersion
-  {_unProductVersion  :: TText}
-  deriving (Eq,Ord,Show)
+  {unProductVersion  :: TText}
+    deriving (Eq,Ord,Show,Generic)
 newtype CustomerName   = CustomerName
-  { _unCustomerName   :: TText}
-  deriving (Eq,Ord,Show)
+  { unCustomerName   :: TText}
+    deriving (Eq,Ord,Show,Generic)
 newtype CustomerNumber = CustomerNumber
-  { _unCustomerNumber :: TText}
-  deriving (Eq,Ord,Show)
+  { unCustomerNumber :: TText}
+    deriving (Eq,Ord,Show,Generic)
 
--- | 140 characters alphanumeric unicode
+-- 140 characters alphanumeric unicode
 type TText = FixedText 140 0 "[[:alnum:]]"
 \stopHaskell
 \stopsectioncolumns

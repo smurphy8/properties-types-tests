@@ -2,6 +2,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeInType #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -16,7 +17,8 @@ module Example.Properties where
 
 
 
-
+import GHC.Generics
+import Test.QuickCheck.Arbitrary.ADT
 import Example.Properties.Types.FixedText
 
 
@@ -26,40 +28,41 @@ data Product = Product {
  version             :: ProductVersion ,
  productCustomer     :: Customer,
  productDescription  :: TText }
+  deriving (Eq,Ord,Show,Generic)
 
 data Customer = Customer {
    customerName    :: CustomerName    ,  
    customerNumber  :: CustomerNumber  ,
-   customerAddress :: CustomerAddress  
-  }
+   customerAddress :: CustomerAddress }
+    deriving (Eq,Ord,Show,Generic)
 
 data CustomerAddress = CustomerAddress {
   street :: TText,
   city   :: TText,
   state  :: State
-} deriving (Eq,Ord,Show)
+} deriving (Eq,Ord,Show,Generic)
 
 data State = Oklahoma | Texas | Kansas
-  deriving (Eq,Ord,Show)
+  deriving (Eq,Ord,Show,Generic)
 
 -- | Base fields
 newtype ProductNumber  = ProductNumber
   { unProductNumber  :: TText}
-  deriving (Eq,Ord,Show)
+  deriving (Eq,Ord,Show,Generic)
 
 newtype ProductName    = ProductName
   { unProductName    :: TText}
-  deriving (Eq,Ord,Show)
+  deriving (Eq,Ord,Show,Generic)
 
 newtype ProductVersion = ProductVersion
   {unProductVersion  :: TText}
-  deriving (Eq,Ord,Show)
+  deriving (Eq,Ord,Show,Generic)
 newtype CustomerName   = CustomerName
   { unCustomerName   :: TText}
-  deriving (Eq,Ord,Show)
+  deriving (Eq,Ord,Show,Generic)
 newtype CustomerNumber = CustomerNumber
   { unCustomerNumber :: TText}
-  deriving (Eq,Ord,Show)
+  deriving (Eq,Ord,Show,Generic)
 
 -- | 140 characters alphanumeric unicode
 type TText = FixedText 140 0 "[[:alnum:]]"
@@ -75,10 +78,10 @@ data ProductRow = ProductRow
     rowCustomerStreet :: TText,
     rowCustomerCity   :: TText,
     rowCustomerState  :: State}
-
+   deriving(Eq,Ord,Show,Generic)
 
 data ProductDocument = ProductDocument !Product !Customer !CustomerAddress
-
+ deriving(Eq,Ord,Show,Generic)
 
 toProductRow  :: Product -> ProductRow
 toProductRow Product {..} = ProductRow productNumber productName    version productDescription

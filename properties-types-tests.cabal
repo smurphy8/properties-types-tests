@@ -32,6 +32,7 @@ library
     , text
     , lucid
     , QuickCheck
+    , quickcheck-arbitrary-adt
   exposed-modules:
       Example.Properties
       Example.Properties.Internal
@@ -56,6 +57,7 @@ executable properties-types-tests
     , text
     , lucid
     , QuickCheck
+    , quickcheck-arbitrary-adt
     , optparse-generic
   other-modules:
       Example.Properties
@@ -80,6 +82,7 @@ test-suite spec
     , text
     , lucid
     , QuickCheck
+    , quickcheck-arbitrary-adt
     , regex-genex
     , tasty
     , tasty-golden

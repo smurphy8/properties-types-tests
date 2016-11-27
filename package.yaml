@@ -17,6 +17,7 @@ dependencies:
   - text
   - lucid  
   - QuickCheck
+  - quickcheck-arbitrary-adt >= 0.2.0.0
 
 library:
   source-dirs: src
