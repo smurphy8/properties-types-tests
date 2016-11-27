@@ -1,21 +1,23 @@
 # properties-types-tests
+This is an introduction to the property based view 
+of a code base. 
 
-TODO: Write description here
-
-## Installation
-
-TODO: Write installation instructions here
-
+Look around!  Let me know if I should change an explanation.
 ## Usage
 
-TODO: Write usage instructions here
+`stack build ` will create the code, but generating the context
+stuff is harder.  The main file is [slidex.tex](./presentation/slidex.tex)
+
+I build it with texworks or auctex mode.  It uses MetaPost.  
+
+[slidex.pdf](./presentation/slidex.pdf) is the output file.
+
 
 ## How to run tests
 
 ```
-cabal configure --enable-tests && cabal build && cabal test
+stack test 
 ```
 
-## Contributing
+Will run the tests that the presentation is discussing.  
 
-TODO: Write contribution instructions here
