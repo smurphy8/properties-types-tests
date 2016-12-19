@@ -1,7 +1,8 @@
+{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE TypeInType #-}
+{-# LANGUAGE DataKinds  #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {- |
 Module      : Example.Properties.Types.FixedText
@@ -17,7 +18,7 @@ characters that are known at compile time.
 | -}
 
 
-module Example.Properties.Types.FixedText where
+module Example.Properties.Types.FixedText (FixedText) where
 
 
 
@@ -134,6 +135,8 @@ instance ( KnownNat max
 
 
 
+
+
 -- | Arbitrary instance
 -- This arbitrary instance takes advantage of the Monoid defined above
 instance ( KnownNat     max
@@ -147,7 +150,6 @@ instance ( KnownNat     max
                             QuickCheck.elements
                               (fixedTextFromString <$>
                                          generatedString)
-
 
 
 

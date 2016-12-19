@@ -1,4 +1,4 @@
--- This file has been generated from package.yaml by hpack version 0.14.1.
+-- This file has been generated from package.yaml by hpack version 0.15.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -32,7 +32,7 @@ library
     , text
     , lucid
     , QuickCheck
-    , quickcheck-arbitrary-adt
+    , quickcheck-arbitrary-adt >= 0.2.0.0
   exposed-modules:
       Example.Properties
       Example.Properties.Internal
@@ -57,12 +57,38 @@ executable properties-types-tests
     , text
     , lucid
     , QuickCheck
-    , quickcheck-arbitrary-adt
+    , quickcheck-arbitrary-adt >= 0.2.0.0
     , optparse-generic
   other-modules:
       Example.Properties
       Example.Properties.Internal
       Example.Properties.Types.FixedText
+  default-language: Haskell2010
+
+test-suite properties-refinements
+  type: exitcode-stdio-1.0
+  main-is: Liquid.hs
+  hs-source-dirs:
+      src
+    , liquid
+  ghc-options: -Wall -threaded -O2
+  build-depends:
+      base >=4 && <5
+    , lens
+    , lens-regex
+    , regex-base
+    , regex-posix
+    , regex-genex
+    , text
+    , lucid
+    , QuickCheck
+    , quickcheck-arbitrary-adt >= 0.2.0.0
+    , liquidhaskell
+  other-modules:
+      Example.Properties
+      Example.Properties.Internal
+      Example.Properties.Types.FixedText
+      Main
   default-language: Haskell2010
 
 test-suite spec
@@ -82,7 +108,7 @@ test-suite spec
     , text
     , lucid
     , QuickCheck
-    , quickcheck-arbitrary-adt
+    , quickcheck-arbitrary-adt >= 0.2.0.0
     , regex-genex
     , tasty
     , tasty-golden

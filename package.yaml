@@ -33,6 +33,7 @@ executables:
     ghc-options: -Wall -threaded -O2
     dependencies:
       - optparse-generic
+
 tests:
   spec:
     main: Spec.hs
@@ -46,3 +47,13 @@ tests:
     - tasty-golden
     - tasty-hunit
     - tasty-quickcheck
+
+
+  properties-refinements:
+    main: Liquid.hs
+    source-dirs:
+    - src
+    - liquid
+    ghc-options: -Wall -threaded -O2
+    dependencies:
+      - liquidhaskell

@@ -159,8 +159,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \startSlide
-  
-  \startmode[manuscript]
+\startmode[manuscript]
 
     You are here to learn the subtle science and exact art of type construction.
     As there is little foolish hand-waving here,
@@ -180,6 +179,31 @@
 I can teach you how to bottle fame, brew glory, even stopper death...
 \stopSlide  
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title Slide 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\startSlide
+\startmode[manuscript]
+
+    You are here to learn the subtle science and exact art of type construction.
+    As there is little foolish hand-waving here,
+    many of you will hardly believe this is programming.
+
+    I can teach you how to bottle fame, brew glory, even stopper death
+
+    Well... maybe not all that but at least how to construct
+    programs that behave themselves a bit better
+
+  Properties, types, and tests are words that are
+  are often seen around the FP community.
+\stopmode
+\SlideTitle{Properties! \\ And their relation to Types and Tests}
+ \blank[8*line]
+
+Or at least how to write programs that break a bit less.
+\stopSlide  
 
 
 
@@ -818,9 +842,19 @@ type TText = FixedText 140 0 "[[:alnum:]]"
   \startitemize
     \item Proofs not Tests!
     \item A way to deal with more at the type level.
-      \startHaskell
-        foo :: Int -> Int
-      \stopHaskell
+    \startHaskell
+    {-@ measure notEmpty @-}
+
+    notEmpty [] = False
+    notEmpty _  = True
+                        
+    {-@ type NotEmptyList a = {xs:[a] | notEmpty xs } @-}                    
+    {-@ headSafe :: NotEmptyList a -> a @-}
+    
+    headSafe (x:xs) = x
+                        
+    tryToUseHeadSafeUnSafely = headSafe []
+    \stopHaskell
       
   \stopitemize  
 \stopSlide  

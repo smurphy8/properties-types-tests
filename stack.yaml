@@ -2,6 +2,12 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
+- location:
+    git: https://github.com/ucsd-progsys/liquidhaskell.git
+    commit: 300524229e49c50d8842e191fdb7e1d537853019
+  subdirs: []
+  extra-dep: true
+  
 extra-deps:
 - herf-time-0.2.2
 - regex-genex-0.7.0
