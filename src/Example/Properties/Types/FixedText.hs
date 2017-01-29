@@ -18,7 +18,7 @@ characters that are known at compile time.
 | -}
 
 
-module Example.Properties.Types.FixedText (FixedText) where
+module Example.Properties.Types.FixedText  where
 
 
 

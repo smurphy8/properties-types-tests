@@ -1,10 +1,13 @@
+% Vim module gives syntax highlighting
 \usemodule[vim]
 
-% \enablemode[manuscript]
-\enablemode[presentation]
-\definevimtyping[Haskell][syntax=haskell,tab=2]                      
-\definevimtyping [RUBY]  [syntax=ruby]
-\setupcolors[state=start]
+%\enablemode[manuscript]
+\enablemode      [presentation]
+
+\definevimtyping [Haskell]      [syntax=haskell,tab=2]                      
+\definevimtyping [RUBY]         [syntax=ruby]
+
+\setupcolors     [state=start]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,44 +39,44 @@
 % This is the markup for the presentation.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\startmode[presentation]
-\setuppapersize[S6][S6] 
-\setvariables[contexts][ mono_font_size_small=9pt
-                       , mono_font_size_mid=10pt
-                       , mono_font_size_large=12pt]
+\startmode      [presentation]
+\setuppapersize [S6][S6] 
+\setvariables   [contexts][ mono_font_size_small=9pt
+                          , mono_font_size_mid=10pt
+                          , mono_font_size_large=12pt]
 
 
-\usetypescript[helvetica] [ec]
-\setupbodyfont[helvetica,14pt]
+\usetypescript [helvetica] [ec]
+\setupbodyfont [helvetica,14pt]
 
-\setuplayout [width=fit,
-              rightmargin=1.5cm,
-              leftmargin=1.5cm,
-              leftmargindistance=0pt,
-              rightmargindistance=0pt,
-              height=fit, 
-              header=0pt, 
-              footer=5pt, 
-              topspace=1.50cm, 
-              backspace=1.5cm,
-              bottomspace=.8cm,
-              bottom=12pt,
-              location=singlesided]
+\setuplayout   [width=fit,
+                rightmargin=1.5cm,
+                leftmargin=1.5cm,
+                leftmargindistance=0pt,
+                rightmargindistance=0pt,
+                height=fit, 
+                header=0pt, 
+                footer=5pt, 
+                topspace=1.50cm, 
+                backspace=1.5cm,
+                bottomspace=.8cm,
+                bottom=12pt,
+                location=singlesided]
 
-\setupcombinations[distance=0pt]
+\setupcombinations [distance=0pt]
 
-\setuppagenumber[state=stop]
+\setuppagenumber   [state=stop]
 
-\setupbackgrounds[page] [background={color,backgraphics,foreground},backgroundcolor=black]
+\setupbackgrounds  [page] [background={color,backgraphics,foreground},backgroundcolor=black]
 
-\startcolor[white]
+\startcolor        [white]
 
 \definestartstop
    [Slide]
    [commands={\switchtobodyfont[20pt]},
     before=\page]
 
-\define[1]\SlideTitle
+\define [1] \SlideTitle
   {\midaligned{\tfb #1}
    \blank[line]}
 
@@ -98,7 +101,6 @@
 \definetypeface[ProjectFont] [tt] [mono]  [ProjectSourceCode] [default]
 
 \usetypescript[ProjectFont] [ec]
-% \setupbodyfont[ProjectFont]
 
 \definefont[SourceCodeFont][Mono sa 0.45]
 
@@ -176,7 +178,7 @@
 \SlideTitle{Properties! \\ And their relation to Types and Tests}
  \blank[8*line]
 
-I can teach you how to bottle fame, brew glory, even stopper death...
+
 \stopSlide  
 
 
@@ -224,8 +226,9 @@ Or at least how to write programs that break a bit less.
 
 \startSlide  
 \startmode[manuscript]
-  Properties can be defined either as those things which an
-  object has or as those things which an object can do.
+  There are many kinds of properties.  Two
+  useful kinds are the properties that an
+  object must have to 
 
 \stopmode
 \SlideTitle{Two ways of looking at properties}
@@ -798,10 +801,10 @@ type TText = FixedText 140 0 "[[:alnum:]]"
   \startmode[manuscript]
     Most of what we are going to test with this test has already been verified
     by the compiler.  But, you may want to future proof the code by testing
-    the code against a runtime enviornment. Remember all code is mutable so
+    the code against a runtime enviornment. Remember most code is mutable so
     having some sort of runtime enviornment is good.
   \stopmode
-  \SlideTitle{All Code is Mutable}
+  \SlideTitle{Most Code is Mutable}
   \blank[2*line]
   \startHaskell
     rowDocumentIsoTest :: Product -> Bool
@@ -827,7 +830,7 @@ type TText = FixedText 140 0 "[[:alnum:]]"
 
 \startSlide
   \startmode[manuscript]
-    Currently the state of the art in Typed Programming
+    Currently the most modern typed programming
     derives the kind of thing you are seeing done with quick check
     for all data instead of a random sampling.
 
