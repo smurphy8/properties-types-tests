@@ -756,6 +756,101 @@ type TText = FixedText 140 0 "[[:alnum:]]"
 
 
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Product Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\startSlide
+  \startmode[manuscript]
+    These types are combined in a new type which represents a document view
+  \stopmode
+
+  \SlideTitle{Separate Types Combined}
+  Use the types to construct a document.
+  \blank[4*line]
+  \startHaskell
+    data ProductDocument = ProductDocument !Product !Customer !CustomerAddress
+ deriving(Eq,Ord,Show,Generic)
+
+  \stopHaskell
+\stopSlide  
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Product Row
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\startSlide
+  \startmode[manuscript]
+    Another view we may want would be all the fields grouped together as a row in a table.
+  \stopmode
+
+  \SlideTitle{Product as a Row}
+  \blank[2*line]
+  \startHaskell
+    data ProductRow = ProductRow
+  { rowProductNumber  :: ProductNumber,
+    rowName           :: ProductName,
+    rowVersion        :: ProductVersion,
+    rowDescription    :: TText,
+    rowCustomerName   :: CustomerName,
+    rowCustomerNumber :: CustomerNumber,    
+    rowCustomerStreet :: TText,
+    rowCustomerCity   :: TText,
+    rowCustomerState  :: State }
+   deriving(Eq,Ord,Show,Generic)
+
+  \stopHaskell
+\stopSlide  
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Isomorphism
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\startSlide
+  \startmode[manuscript]
+    Transforming the data from one presentation to another
+    is one of the core ideas of FP
+  \stopmode
+
+  \SlideTitle{Isomorphism}
+  \blank[2*line]
+  \startHaskell
+toProductRow  :: Product -> ProductRow
+toProductRow Product {..} = ProductRow productNumber productName    version productDescription
+                                       customerName  customerNumber street  city                state
+  where
+    Customer {..}        = productCustomer
+    CustomerAddress {..} = customerAddress
+
+
+
+fromProductRow :: ProductRow -> Product
+fromProductRow (ProductRow {..}) = Product rowProductNumber rowName rowVersion customer rowDescription 
+  where
+    customer        = Customer        rowCustomerName   rowCustomerNumber customerAddress
+    customerAddress = CustomerAddress rowCustomerStreet rowCustomerCity   rowCustomerState
+
+  \stopHaskell
+\stopSlide  
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Arbitrary Instance Generation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -791,7 +886,6 @@ type TText = FixedText 140 0 "[[:alnum:]]"
 
   \stopHaskell  
 \stopSlide  
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
