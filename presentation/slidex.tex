@@ -9,7 +9,7 @@
 
 \setupcolors     [state=start]
 
-
+\setupexternalfigures[location=local,directory=.,conversion=pdf]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the markup for the manuscript.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,6 +146,61 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \starttext
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Cold Open Slides
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document View
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\startSlide
+\startmode[manuscript]
+  Documents are often a nest of different records.
+\stopmode
+\SlideTitle{Data in Document View}
+\externalfigure[DocumentViewDiagram.svg] [width=400px,align=center]
+
+
+\stopSlide  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Normalized View
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\startSlide
+\startmode[manuscript]
+  For saving Normalization is often ideal
+\stopmode
+\SlideTitle{Normalized Data for DB}
+\externalfigure[NormalizedDataView.svg] [width=500px,align=center]
+
+
+\stopSlide  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Table View
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\startSlide
+\startmode[manuscript]
+  For compact viewing you might want a table 
+\stopmode
+\SlideTitle{Normalized Data for DB}
+\externalfigure[TableViewDiagram.svg] [width=500px,align=center]
+
+
+\stopSlide  
 
 
 

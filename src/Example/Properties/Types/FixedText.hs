@@ -37,9 +37,13 @@ import qualified Test.QuickCheck as QuickCheck
 import qualified Regex.Genex as Genex
 
 
+
+newtype RegexString = RegexString{ unRegex :: String}
+  deriving (Show,Eq,Ord)
+
 -- | Set of things that can go wrong with Fixed Text construction
 data FixedTextErrors = FixedTextErrorMin
-                     | FixedTextErrorRegex String String
+                     | FixedTextErrorRegex RegexString String
                      | FixedTextErrorMax
   deriving (Show,Eq,Ord)
 
@@ -63,9 +67,9 @@ fixedTextFromString str = final
     max'          = fromIntegral $ natVal (Proxy :: Proxy max)
     min'          = fromIntegral $ natVal (Proxy :: Proxy min)    
     isTooLittle   = length str < min'
-    regexStr      = symbolVal (Proxy :: Proxy regex)
+    regexStr      = RegexString $ symbolVal (Proxy :: Proxy regex)
     trimmedString = take max' str
-    notRegex      = notValidRegex regexStr trimmedString
+    notRegex      = notValidRegex (unRegex regexStr) trimmedString
     final
       | isTooLittle = Left   FixedTextErrorMin
       | notRegex    = Left (FixedTextErrorRegex regexStr trimmedString)
@@ -82,9 +86,9 @@ fixedTextFromText txt = final
     max'          = fromIntegral $ natVal (Proxy :: Proxy max)
     min'          = fromIntegral $ natVal (Proxy :: Proxy min)    
     isTooLittle   = Text.length txt < min'
-    regexStr      = symbolVal (Proxy :: Proxy regex)
+    regexStr      = RegexString $ symbolVal (Proxy :: Proxy regex)
     trimmedText   = Text.take max' txt
-    notRegex      = notValidRegex regexStr (Text.unpack trimmedText)
+    notRegex      = notValidRegex (unRegex regexStr) (Text.unpack trimmedText)
     final
       | isTooLittle = Left   FixedTextErrorMin
       | notRegex    = Left (FixedTextErrorRegex regexStr (Text.unpack trimmedText))

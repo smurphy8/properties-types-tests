@@ -94,13 +94,18 @@ toProductRow Product {..} = ProductRow productNumber productName    version prod
 
 
 fromProductRow :: ProductRow -> Product
-fromProductRow (ProductRow {..}) = Product rowProductNumber rowName rowVersion customer rowDescription 
+fromProductRow (ProductRow {..}) = exampleProduct
   where
     customer        = Customer        rowCustomerName   rowCustomerNumber customerAddress
     customerAddress = CustomerAddress rowCustomerStreet rowCustomerCity   rowCustomerState
 
+    exampleProduct = Product {productNumber      = rowProductNumber,
+                              productName        = rowName ,
+                              version            = rowVersion,
+                              productCustomer    = customer,
+                              productDescription = rowDescription}
 
-    
+
 -- | Arbitrary instances for the above types (separated for readability)
 
 instance Arbitrary ProductVersion where
